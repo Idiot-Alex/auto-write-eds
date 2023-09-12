@@ -7,7 +7,9 @@ cd {{project directory}}
 
 python main.py --name xxx --password xxx
 
+
 ## build 
+
 ```
 pip install playwright
 set PLAYWRIGHT_BROWSERS_PATH=0
