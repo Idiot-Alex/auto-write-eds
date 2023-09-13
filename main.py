@@ -1,9 +1,9 @@
+import sys
 from playwright.sync_api import sync_playwright
 import datetime
 import calendar
 # 从命令行读取参数
 import argparse
-import time
 
 def run(playwright, args):
     chromium = playwright.chromium # or "firefox" or "webkit".
@@ -46,14 +46,19 @@ def run(playwright, args):
     browser.close()
 
 def handle_login(page, name, password):
+    page.on("dialog", lambda dialog: print("login action" + ": " + dialog.message))
     page.locator("input#UserId").fill(name)
     page.locator("input#UserPassword").fill(password)
     page.locator("button#btnSubmit").click()
+
+def check_login_error(dialog):
+    print("login action" + ": " + dialog.message)
+    if (dialog.message == "用户名或密码错误"):
+        sys.exit()
     
 def handle_dialog(dialog, dateStr):
     print(dateStr + ": " + dialog.message)
     dialog.accept()
-    time.sleep(1)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
