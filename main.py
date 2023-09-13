@@ -1,4 +1,4 @@
-import sys
+import os
 from playwright.sync_api import sync_playwright
 import datetime
 import calendar
@@ -9,15 +9,15 @@ def run(playwright, args):
     chromium = playwright.chromium # or "firefox" or "webkit".
     browser = chromium.launch(
         headless = True,
-        slow_mo = 200
+        # slow_mo = 200
     )
     page = browser.new_page()
     page.goto("http://eds.newtouch.cn/eds3/")
 
+    page.on("dialog", handle_dialog)
+
     handle_login(page, args.name, args.password)
 
-    page.on("dialog", lambda dialog: handle_dialog(dialog, dateStr))
-    
     # 获取当前年份和月份
     now = datetime.datetime.now()
     year = now.year
@@ -46,24 +46,23 @@ def run(playwright, args):
     browser.close()
 
 def handle_login(page, name, password):
-    page.on("dialog", lambda dialog: print("login action" + ": " + dialog.message))
     page.locator("input#UserId").fill(name)
     page.locator("input#UserPassword").fill(password)
     page.locator("button#btnSubmit").click()
-
-def check_login_error(dialog):
-    print("login action" + ": " + dialog.message)
-    if (dialog.message == "用户名或密码错误"):
-        sys.exit()
     
-def handle_dialog(dialog, dateStr):
-    print(dateStr + ": " + dialog.message)
-    dialog.accept()
+def handle_dialog(dialog):
+    print(f"dialog msg: {dialog.message}")
+    if (dialog.message == "用户名或密码错误"):
+        print("程序终止...请检查用户名密码是否正确")
+        os._exit(1)
+    else:
+        dialog.accept()
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--name", help="login user name", required=True)
     parser.add_argument("--password", help="login user password", required=True)
+    parser.add_argument("--msg", help="EDS content message, such as '代码开发'", default="代码开发")
     args = parser.parse_args()
 
     with sync_playwright() as playwright:
