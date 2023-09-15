@@ -31,7 +31,7 @@ def run(playwright, args):
         table = page.locator("table#dgWorkLogList")
         if table.count() > 0:
             print(dateStr + " EDS done....")
-        else: 
+        else:
             page.locator("input#txtStartTime").fill("09:00")
             page.locator("input#txtEndTime").fill("12:00")
             page.locator("textarea#txtMemo").fill("开发")
@@ -41,7 +41,7 @@ def run(playwright, args):
             page.locator("input#txtEndTime").fill("18:00")
             page.locator("textarea#txtMemo").fill("开发")
             page.locator("input#btnSave").click()
-        
+            print(dateStr + " write EDS done....")
     # other actions...
     browser.close()
 
@@ -49,7 +49,7 @@ def handle_login(page, name, password):
     page.locator("input#UserId").fill(name)
     page.locator("input#UserPassword").fill(password)
     page.locator("button#btnSubmit").click()
-    
+
 def handle_dialog(dialog):
     print(f"dialog msg: {dialog.message}")
     if (dialog.message == "用户名或密码错误"):
