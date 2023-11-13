@@ -34,12 +34,12 @@ def run(playwright, args):
         else:
             page.locator("input#txtStartTime").fill("09:00")
             page.locator("input#txtEndTime").fill("12:00")
-            page.locator("textarea#txtMemo").fill("开发")
+            page.locator("textarea#txtMemo").fill(args.msg)
             page.locator("input#btnSave").click()
 
             page.locator("input#txtStartTime").fill("13:00")
             page.locator("input#txtEndTime").fill("18:00")
-            page.locator("textarea#txtMemo").fill("开发")
+            page.locator("textarea#txtMemo").fill(args.msg)
             page.locator("input#btnSave").click()
             print(dateStr + " write EDS done....")
     # other actions...
@@ -56,7 +56,9 @@ def handle_dialog(dialog):
         print("程序终止...请检查用户名密码是否正确")
         os._exit(1)
     else:
-        dialog.accept()
+        dialog.accept() 
+        print(f"程序终止...{dialog.message}")
+        os._exit(1)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
